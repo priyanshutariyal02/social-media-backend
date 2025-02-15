@@ -15,7 +15,6 @@ This repository contains the backend service for a social media application, bui
 * **Node.js:** JavaScript runtime environment.
 * **Express.js:** Web application framework.
 * **MongoDB:** NoSQL database.
-* **Mongoose Aggregate Paginate V2:** Allow to write aggregration queries.
 * **Cloudinary:** Cloud-based media management.
 * **Multer:** Middleware for handling multipart/form-data (file uploads).
 * **Bcrypt:** Password hashing library.
@@ -24,6 +23,10 @@ This repository contains the backend service for a social media application, bui
 * **Nodemon:** Development tool for server auto-restart.
 * **Prettier:** Code formatter.
 * **GitHub:** Version control.
+
+## Model Design
+
+![diagram-export-2-10-2025-1_10_38-PM](https://github.com/user-attachments/assets/7eb89849-1096-49f1-8def-ae1a82e22b12)
 
 ## Architecture
 
