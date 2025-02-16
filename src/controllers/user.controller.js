@@ -4,6 +4,7 @@ import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
@@ -269,11 +270,11 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullName, email } = req.body;
 
   if (!fullName || !email) {
-    throw new ApiError(400, "All fields are required!");
+    throw new ApiError(404, "All fields are required!");
   }
 
   const user = await User.findByIdAndUpdate(
-    req.body?._id,
+    req.user?._id,
     {
       $set: {
         fullName,
@@ -289,30 +290,29 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 });
 
 const updateUserAvatar = asyncHandler(async (req, res) => {
-  const avatarLocalPath = await req.file?.path;
+  const avatarLocalPath = req.file?.path;
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar is missing!");
   }
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
+
   if (!avatar.url) {
     throw new ApiError(400, "Error while uploading on avatar!");
   }
 
-  const user = await avatar
-    .findByIdAndUpdate(
-      req.user._id,
-      {
-        $set: {
-          avatar: avatar.url,
-        },
+  const user = await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $set: {
+        avatar: avatar.url,
       },
-      {
-        new: true,
-      }
-    )
-    .select("-password");
+    },
+    {
+      new: true,
+    }
+  ).select("-password");
 
   return res
     .status(200)
@@ -386,7 +386,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         },
         isSubscribed: {
           $cond: {
-            if: { $in: [req.user?._id, "#subscribers.subscriber"] },
+            if: { $in: [req.user?._id, "$subscribers.subscriber"] },
             then: true,
             else: false,
           },
