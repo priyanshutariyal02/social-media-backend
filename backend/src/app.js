@@ -9,10 +9,8 @@ const app = express();
 // configure cors for retrival of requests from valid source only(i.e. frontend)
 app.use(
   cors({
-    // in env CORS_ORIGIN = URL or * (* accepts req from anywhere)
-    origin: process.env.CORS_ORIGIN,
+    origin: process.env.CORS_ORIGIN === "*" ? true : (process.env.CORS_ORIGIN || "http://localhost:5173"),
     credentials: true,
-    // refer cors docs for more
   })
 );
 
@@ -51,5 +49,17 @@ app.use("/api/v1/playlists", playlistRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 
 // URL create like this: https://localhost:8000/api/v1/users/register
+
+// Global Error Handler Middleware
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+  return res.status(statusCode).json({
+    statusCode,
+    success: false,
+    message,
+    errors: err.errors || [],
+  });
+});
 
 export { app };
