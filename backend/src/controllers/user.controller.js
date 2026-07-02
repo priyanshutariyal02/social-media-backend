@@ -103,23 +103,10 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  // steps:
-  // get data from req body
-  // username or email
-  // find the user
-  // check password
-  // access and refresh token, send to user
-  // send cookie
-
   const { email, username, password } = req.body;
   if (!email && !username) {
     throw new ApiError(400, "Username or email is required!");
   }
-
-  // Alternative
-  // if (!(email || username)) {
-  //   throw new ApiError(400, "Username or email is required!");
-  // }
 
   const user = await User.findOne({
     $or: [{ username }, { email }],
@@ -258,7 +245,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
-    .json(200, req.user, "Current user fetch successfully!");
+    .json(new ApiResponse(200, req.user, "Current user fetched successfully!"));
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {

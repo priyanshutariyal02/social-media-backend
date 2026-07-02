@@ -1,5 +1,6 @@
 import { isValidObjectId } from "mongoose";
 import { Tweet } from "../models/tweet.models.js";
+import { Like } from "../models/like.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -22,17 +23,34 @@ const createTweet = asyncHandler(async (req, res) => {
 
 const getUserTweets = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  if (!isValidObjectId(userId)) {
-    throw new ApiError(400, "Invalid user ID");
+  const filter = {};
+
+  if (userId && userId !== "all") {
+    if (!isValidObjectId(userId)) {
+      throw new ApiError(400, "Invalid user ID");
+    }
+    filter.owner = userId;
   }
 
-  const tweets = await Tweet.find({ owner: userId })
-    .populate("owner", "username avatar")
-    .sort({ createdAt: -1 });
+  const tweets = await Tweet.find(filter)
+    .populate("owner", "username fullName avatar")
+    .sort({ createdAt: -1 })
+    .lean();
+
+  const currentUserId = req.user?._id;
+  const tweetsWithLikes = await Promise.all(
+    tweets.map(async (tweet) => {
+      const likesCount = await Like.countDocuments({ tweet: tweet._id });
+      const isLiked = currentUserId
+        ? !!(await Like.findOne({ tweet: tweet._id, likeBy: currentUserId }))
+        : false;
+      return { ...tweet, likesCount, isLiked };
+    })
+  );
 
   res
     .status(200)
-    .json(new ApiResponse(200, tweets, "User tweets fetched successfully"));
+    .json(new ApiResponse(200, tweetsWithLikes, "Tweets fetched successfully"));
 });
 
 const updateTweet = asyncHandler(async (req, res) => {
