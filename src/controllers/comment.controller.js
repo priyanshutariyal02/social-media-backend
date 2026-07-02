@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Comment } from "../models/comment.model.js";
+import { Comment } from "../models/comment.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -9,7 +9,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
 
   const comment = await Comment.aggregate([
-    { $match: { video: mongoose.Types.ObjectId(videoId) } },
+    { $match: { video: new mongoose.Types.ObjectId(videoId) } },
     {
       $lookup: {
         from: "users",
@@ -65,7 +65,7 @@ const addComment = asyncHandler(async (req, res) => {
 const updateComment = asyncHandler(async (req, res) => {
   const { commentId } = req.params;
   const { content } = req.body;
-  const ownerId = req.user.id;
+  const ownerId = req.user._id;
 
   const comment = await Comment.findOneAndUpdate(
     { _id: commentId, owner: ownerId },
@@ -83,7 +83,7 @@ const updateComment = asyncHandler(async (req, res) => {
 });
 
 const deleteComment = asyncHandler(async (req, res) => {
-  const { commentId } = req.body;
+  const { commentId } = req.params;
   const ownerId = req.user._id;
 
   const comment = await Comment.findOneAndDelete({
