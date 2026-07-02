@@ -34,16 +34,6 @@ export const Sidebar: React.FC = () => {
           </NavLink>
         );
       })}
-
-      <div className="mt-auto p-4 rounded-2xl bg-gradient-to-br from-[#131a2a] to-[#172033] border border-[#1f293d]">
-        <h4 className="text-sm font-semibold text-white mb-1">Go Premium</h4>
-        <p className="text-xs text-gray-400 mb-3">
-          Unlock 4K streaming and zero ads across your device.
-        </p>
-        <button className="w-full py-2 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 text-xs font-semibold border border-cyan-500/30 transition-all">
-          Explore Features
-        </button>
-      </div>
     </aside>
   );
 };
