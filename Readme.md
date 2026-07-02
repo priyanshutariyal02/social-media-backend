@@ -1,91 +1,138 @@
-# Social Media Backend Service
+# Playtube — Full-Stack Video & Social Media Streaming Platform
 
-This repository contains the backend service for a social media application, built using Node.js, Express.js, and MongoDB.  It provides core functionalities for user authentication, profile and post management, leveraging Cloudinary for media storage and various middleware for request handling and security.
+A production-ready, full-stack video broadcasting and social engagement platform built with modern web architecture. Featuring high-definition video streaming, creator studio analytics, interactive community tweets, hierarchical nested commenting, and real-time search capabilities.
+
+---
 
 ## Key Features
 
-* **User Authentication:** Secure sign-up, login, logout, and session management using access and refresh tokens.
-* **Profile Management:**  Users can update their profile information and upload profile pictures.
-* **Post Management:**  Create, read, update, and delete posts, including image uploads.
-* **Data Operations:** Comprehensive CRUD operations for user and post data.
-* **Data Aggregation:** MongoDB aggregation pipelines for fetching user feeds and analytics.
+### Frontend (Client Application)
+* **Vibrant & Dynamic UI:** Built with **React 18**, **TypeScript**, and **Vite**, styled with custom sleek dark mode aesthetics using **TailwindCSS**.
+* **Optimized State & Caching:** Powered by **TanStack Query (React Query)** for lightning-fast API responses, automatic background data refetching, and optimistic UI updates.
+* **Live Instant Stream Search:** Real-time search bar dropdown in the navigation bar that queries matching videos and community posts as you type.
+* **Interactive Video Player:** Dedicated watch screen (`/watch/:videoId`) featuring dynamic view counters, subscriber tracking, like toggling, and nested discussion threads.
+* **Creator Studio Dashboard:** Dedicated management hub (`/dashboard`) for creators to track channel analytics (views, likes, subscribers), publish new video broadcasts, toggle visibility, and edit existing media.
+* **Creator Stream & Tweets:** Twitter-style social community stream (`/tweets`) with nested reply drawers for interactive creator-fan discussions.
 
-## Technologies Used
+### Backend (API Service)
+* **Secure Authentication & Authorization:** JWT-based stateless access and refresh token rotation with secure HTTP-only cookie support and bcrypt password hashing.
+* **Cloud Media Pipeline:** Seamless multipart file uploads via **Multer** integrated with **Cloudinary** for scalable cloud video streaming and image optimization.
+* **Complex MongoDB Aggregation Pipelines:** Advanced data aggregation for calculating subscriber counts, watch history, video like metrics, and nested comment structures.
+* **Hierarchical Discussion System:** Unified `Comment` schema supporting both top-level comments and multi-level nested replies on videos and tweets.
+* **Resilient CORS & Security:** Production-configured CORS allowing cross-origin requests from Vercel frontends with credential support.
 
-* **Node.js:** JavaScript runtime environment.
-* **Express.js:** Web application framework.
-* **MongoDB:** NoSQL database.
-* **Cloudinary:** Cloud-based media management.
-* **Multer:** Middleware for handling multipart/form-data (file uploads).
-* **Bcrypt:** Password hashing library.
-* **Axios:** HTTP client (for testing).
-* **CORS:** Middleware for Cross-Origin Resource Sharing.
-* **Nodemon:** Development tool for server auto-restart.
-* **Prettier:** Code formatter.
-* **GitHub:** Version control.
+---
 
-## Model Design
+## Technology Stack
 
-![diagram-export-2-10-2025-1_10_38-PM](https://github.com/user-attachments/assets/7eb89849-1096-49f1-8def-ae1a82e22b12)
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 18, TypeScript, Vite, TailwindCSS, TanStack Query (v5), React Router DOM, Lucide Icons, Axios |
+| **Backend** | Node.js (ESM), Express.js, MongoDB Atlas, Mongoose, Cloudinary SDK, Multer, JSON Web Tokens (JWT), Bcrypt |
+| **Deployment** | Vercel (Frontend SPA & CDN), Render / Cloud Containers (Node/Express API Service) |
 
-## Architecture
+---
 
-The backend follows a modular architecture, separating concerns into distinct routes and middleware.  Key components include:
+## Database Model & Architecture
 
-* **Authentication:** Handles user registration, login, and token management.
-* **Profile:** Manages user profile information and updates.
-* **Post:** Handles post creation, retrieval, updates, and deletion.
-* **Middleware:** Implements authentication, file uploads, CORS, and error handling.
-* **Database:** MongoDB stores user and post data.
-* **Storage:** Cloudinary handles media storage and transformations.
+![Model Design](https://github.com/user-attachments/assets/7eb89849-1096-49f1-8def-ae1a82e22b12)
 
-## Functionality Breakdown
+The backend follows a clean MVC modular architecture separated into distinct routes, controllers, models, and custom middlewares:
+* **`User` Schema:** Handles authentication details, channel cover images, avatars, and watch history.
+* **`Video` Schema:** Stores streaming file URLs, duration, thumbnails, views, publication status, and owner references.
+* **`Tweet` Schema:** Stores community text broadcasts and creator posts.
+* **`Comment` Schema:** Hierarchical document structure linking to either a `Video` or `Tweet` with a `parentComment` pointer for nested replies.
+* **`Like` & `Subscription` Schemas:** Relational mapping documents tracking likes across videos/comments/tweets and user-to-user subscriptions.
 
-### User Management
+---
 
-* **Sign Up:**  Registers new users with email, password, and profile details.  Passwords are securely hashed using bcrypt.
-* **Login:** Authenticates existing users and issues access and refresh tokens.
-* **Tokens:**
-    * **Access Token:** Authorizes API requests.
-    * **Refresh Token:** Used to obtain new access tokens.
+## Project Structure
 
-### Profile & Post Management
+```text
+social-media-backend/
+├── backend/                  # Node.js + Express API Server
+│   ├── src/
+│   │   ├── controllers/      # Route controllers (auth, videos, comments, dashboard, etc.)
+│   │   ├── db/               # MongoDB Atlas connection handler
+│   │   ├── middlewares/      # Auth verification & Multer file upload middlewares
+│   │   ├── models/           # Mongoose schemas (User, Video, Tweet, Comment, Like, etc.)
+│   │   ├── routes/           # REST API routes v1
+│   │   └── utils/            # Cloudinary uploader, ApiError & ApiResponse handlers
+│   └── package.json
+│
+└── frontend/                 # React + TypeScript + Vite SPA
+    ├── src/
+    │   ├── api/              # Axios client with JWT interceptors & token rotation
+    │   ├── components/       # Reusable UI components (Navbar, Sidebar, VideoCard, etc.)
+    │   ├── context/          # Global AuthContext provider
+    │   ├── pages/            # Application screens (Home, WatchVideo, Tweets, Dashboard, Auth)
+    │   └── types/            # TypeScript interfaces
+    ├── vercel.json           # SPA rewrite configuration for Vercel deployment
+    └── package.json
+```
 
-* **Profile Management:** Users can update profile information and upload profile pictures via Cloudinary.
-* **Post CRUD Operations:** Create, read, update, and delete posts. Image attachments are handled by Multer and stored in Cloudinary.
-* **Data Aggregation:** MongoDB aggregation pipelines are used to retrieve user feeds, post analytics, and user engagement statistics.
+---
 
-### Middleware & Error Handling
+## Getting Started Locally
 
-* **Authentication Middleware:** Protects routes requiring authentication by verifying access tokens.  Handles refresh token requests.
-* **Multer Middleware:** Handles multipart/form-data for file uploads.
-* **CORS Middleware:** Enables cross-origin requests.
-* **Error Handling:** Centralized error handling for consistent API responses.
+### 1. Prerequisites
+* **Node.js** (v18+ recommended)
+* **MongoDB Atlas** or Local MongoDB instance
+* **Cloudinary Account** (for video and thumbnail storage)
 
-### Routing
+### 2. Backend Setup
+```bash
+cd backend
+npm install
+```
 
-* **Express Routers:** Organizes routes for user management, profiles, and posts.
-* **Protected Routes:** Requires authentication and authorization.
+Create a `.env` file inside `/backend`:
+```env
+PORT=8000
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net
+CORS_ORIGIN=http://localhost:5173
 
-### API Documentation
+ACCESS_TOKEN_SECRET=your_super_secret_access_token_key
+ACCESS_TOKEN_EXPIRY=1d
+REFRESH_TOKEN_SECRET=your_super_secret_refresh_token_key
+REFRESH_TOKEN_EXPIRY=10d
 
-Postman is used for API documentation and testing.  (Link to Postman collection or instructions on how to import it would be beneficial here).
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+```
 
-### Data Modeling
+Start the backend development server:
+```bash
+npm run dev
+```
 
-* **User Schema:** Defines user properties (name, email, password hash, profile picture URL, etc.).
-* **Post Schema:** Stores post details (content, images, timestamps, author references).
+### 3. Frontend Setup
+Open a new terminal session:
+```bash
+cd frontend
+npm install
+```
 
-## Getting Started
+Create a `.env` file inside `/frontend`:
+```env
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+```
 
-### Prerequisites
+Start the Vite development server:
+```bash
+npm run dev
+```
+Navigate to `http://localhost:5173` in your browser to experience Playtube locally!
 
-* Node.js (v16 or higher recommended)
-* MongoDB (running instance)
-* Cloudinary Account (with API keys)
+---
 
-### Installation
+## Production Deployment Guide
 
-1. Clone the repository: `git clone <repository_url>`
-2. Install dependencies: `npm install`
-3. Configure environment variables: Create a `.env` file in the root directory and add the following (replace with your actual values):
+* **Frontend (Vercel):** Deployed effortlessly with automated client-side route handling via `vercel.json`. Configure environment variable `VITE_API_BASE_URL` pointing to your live backend domain.
+* **Backend (Render):** Running on a dedicated Node container (`npm start`) to guarantee unrestricted payload streaming for large video file uploads to Cloudinary without serverless execution timeouts.
+
+---
+
+## License
+Designed and developed by [Priyanshu Tariyal](https://github.com/priyanshutariyal02).
