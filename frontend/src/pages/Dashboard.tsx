@@ -3,7 +3,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api/client";
 import type { ChannelStats, Video } from "../types";
 import { VideoCard } from "../components/VideoCard";
-import { Eye, Users, Video as VideoIcon, ThumbsUp, Upload, X, Loader2 } from "lucide-react";
+import {
+  Eye,
+  Users,
+  Video as VideoIcon,
+  ThumbsUp,
+  Upload,
+  X,
+  Loader2,
+} from "lucide-react";
 
 export const Dashboard: React.FC = () => {
   const queryClient = useQueryClient();
@@ -24,13 +32,15 @@ export const Dashboard: React.FC = () => {
   });
 
   // Fetch Channel Videos
-  const { data: channelVideos, isLoading: isVideosLoading } = useQuery<Video[]>({
-    queryKey: ["channelVideos"],
-    queryFn: async () => {
-      const res = await api.get("/dashboard/videos");
-      return res.data?.data || [];
-    },
-  });
+  const { data: channelVideos, isLoading: isVideosLoading } = useQuery<Video[]>(
+    {
+      queryKey: ["channelVideos"],
+      queryFn: async () => {
+        const res = await api.get("/dashboard/videos");
+        return res.data?.data || [];
+      },
+    }
+  );
 
   // Upload video mutation
   const uploadMutation = useMutation({
@@ -76,9 +86,12 @@ export const Dashboard: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">Creator Studio</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            Creator Studio
+          </h1>
           <p className="text-sm text-gray-400 mt-1">
-            Manage your broadcasts, track analytics, and publish new video streams.
+            Manage your broadcasts, track analytics, and publish new video
+            streams.
           </p>
         </div>
         <button
@@ -148,7 +161,10 @@ export const Dashboard: React.FC = () => {
         {isVideosLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-pulse">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="aspect-video rounded-2xl bg-[#131a2a] border border-[#1f293d]" />
+              <div
+                key={i}
+                className="aspect-video rounded-2xl bg-[#131a2a] border border-[#1f293d]"
+              />
             ))}
           </div>
         ) : channelVideos && channelVideos.length > 0 ? (
@@ -160,9 +176,12 @@ export const Dashboard: React.FC = () => {
         ) : (
           <div className="p-16 text-center rounded-3xl bg-[#131a2a]/40 border border-[#1f293d] flex flex-col items-center">
             <VideoIcon className="w-12 h-12 text-gray-600 mb-3" />
-            <h3 className="text-base font-semibold text-gray-200">No Videos Published</h3>
+            <h3 className="text-base font-semibold text-gray-200">
+              No Videos Published
+            </h3>
             <p className="text-xs text-gray-400 mt-1 max-w-sm">
-              Click the "Publish Video" button above to upload your first broadcast to Cloudinary and stream it live.
+              Click the "Publish Video" button above to upload your first
+              broadcast to Cloudinary and stream it live.
             </p>
           </div>
         )}
@@ -173,7 +192,9 @@ export const Dashboard: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="w-full max-w-lg bg-[#131a2a] border border-[#1f293d] rounded-3xl p-6 shadow-2xl flex flex-col gap-5 relative">
             <div className="flex items-center justify-between border-b border-[#1f293d] pb-4">
-              <h3 className="text-lg font-bold text-white">Publish New Video</h3>
+              <h3 className="text-lg font-bold text-white">
+                Publish New Video
+              </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="p-1.5 rounded-xl text-gray-400 hover:text-white hover:bg-[#1f293d] transition-colors"
@@ -239,7 +260,9 @@ export const Dashboard: React.FC = () => {
                     type="file"
                     required
                     accept="image/*"
-                    onChange={(e) => setThumbnailFile(e.target.files?.[0] || null)}
+                    onChange={(e) =>
+                      setThumbnailFile(e.target.files?.[0] || null)
+                    }
                     className="w-full text-xs text-gray-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-500/10 file:text-blue-400 hover:file:bg-blue-500/20"
                   />
                 </div>
@@ -250,8 +273,14 @@ export const Dashboard: React.FC = () => {
                 disabled={uploadMutation.isPending}
                 className="w-full mt-2 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-bold text-sm shadow-lg shadow-cyan-500/20 hover:brightness-110 active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
               >
-                {uploadMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-                <span>{uploadMutation.isPending ? "Uploading to Cloudinary..." : "Publish Broadcast"}</span>
+                {uploadMutation.isPending && (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                )}
+                <span>
+                  {uploadMutation.isPending
+                    ? "Uploading to Cloudinary..."
+                    : "Publish Broadcast"}
+                </span>
               </button>
             </form>
           </div>

@@ -64,7 +64,9 @@ export const Auth: React.FC = () => {
       }
     } catch (err: any) {
       setError(
-        err?.response?.data?.message || err?.message || "Authentication failed. Please try again."
+        err?.response?.data?.message ||
+          err?.message ||
+          "Authentication failed. Please try again."
       );
     } finally {
       setIsLoading(false);
@@ -127,7 +129,11 @@ export const Auth: React.FC = () => {
                 <label className="relative group cursor-pointer">
                   <div className="w-20 h-20 rounded-full overflow-hidden bg-[#0b0f19] border-2 border-dashed border-cyan-500/50 flex items-center justify-center group-hover:border-cyan-400 transition-colors">
                     {avatarPreview ? (
-                      <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+                      <img
+                        src={avatarPreview}
+                        alt="Avatar"
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
                       <Upload className="w-6 h-6 text-cyan-400" />
                     )}

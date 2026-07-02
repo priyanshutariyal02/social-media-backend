@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 import { Tweet } from "../models/tweet.models.js";
 import { Like } from "../models/like.models.js";
+import { Comment } from "../models/comment.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -41,10 +42,11 @@ const getUserTweets = asyncHandler(async (req, res) => {
   const tweetsWithLikes = await Promise.all(
     tweets.map(async (tweet) => {
       const likesCount = await Like.countDocuments({ tweet: tweet._id });
+      const commentsCount = await Comment.countDocuments({ tweet: tweet._id });
       const isLiked = currentUserId
         ? !!(await Like.findOne({ tweet: tweet._id, likeBy: currentUserId }))
         : false;
-      return { ...tweet, likesCount, isLiked };
+      return { ...tweet, likesCount, commentsCount, isLiked };
     })
   );
 

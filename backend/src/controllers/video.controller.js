@@ -94,8 +94,10 @@ const publishAVideo = asyncHandler(async (req, res) => {
     isPublished: true,
   });
 
+  const populatedVideo = await Video.findById(newVideo._id).populate("owner", "username fullName avatar");
+
   res.status(201).json(
-    new ApiResponse(201, newVideo, "Video published successfully")
+    new ApiResponse(201, populatedVideo, "Video published successfully")
   );
 });
 

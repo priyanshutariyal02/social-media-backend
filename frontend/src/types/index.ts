@@ -30,6 +30,7 @@ export interface Tweet {
   owner: User;
   createdAt: string;
   likesCount?: number;
+  commentsCount?: number;
   isLiked?: boolean;
 }
 
@@ -39,6 +40,7 @@ export interface Comment {
   video: string;
   owner: User;
   createdAt: string;
+  repliesCount?: number;
 }
 
 export interface ChannelStats {

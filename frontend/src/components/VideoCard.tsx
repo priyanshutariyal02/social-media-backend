@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import type { Video } from "../types";
+import { useAuth } from "../context/AuthContext";
 import { Eye, Clock } from "lucide-react";
 
 interface VideoCardProps {
@@ -8,6 +9,15 @@ interface VideoCardProps {
 }
 
 export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
+  const { user } = useAuth();
+  const avatarUrl = video.owner?.avatar;
+  const ownerName =
+    video.owner?.fullName ||
+    (video.owner?.username ? `@${video.owner.username}` : null) ||
+    user?.fullName ||
+    (user?.username ? `@${user.username}` : null) ||
+    "Creator";
+
   const formatDuration = (seconds: number) => {
     if (!seconds) return "0:00";
     const mins = Math.floor(seconds / 60);
@@ -33,10 +43,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
         className="relative aspect-video rounded-2xl overflow-hidden bg-[#131a2a] border border-[#1f293d] group-hover:border-cyan-500/40 transition-all shadow-md"
       >
         <img
-          src={
-            video.thumbnail ||
-            "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=600"
-          }
+          src={video.thumbnail}
           alt={video.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
@@ -52,8 +59,8 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
       {/* Metadata */}
       <div className="flex gap-3 px-1">
         <img
-          src={video.owner?.avatar}
-          alt={video.owner?.username}
+          src={avatarUrl}
+          alt={ownerName}
           className="w-9 h-9 rounded-full object-cover ring-1 ring-[#1f293d] shrink-0 mt-0.5"
         />
         <div className="flex flex-col min-w-0 flex-1">
@@ -64,7 +71,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
             {video.title}
           </Link>
           <span className="text-xs text-gray-400 mt-1 hover:text-gray-200 transition-colors">
-            {video.owner?.fullName || `@${video.owner?.username}`}
+            {ownerName}
           </span>
           <div className="flex items-center gap-2 text-[11px] text-gray-500 mt-0.5">
             <span className="flex items-center gap-1">
