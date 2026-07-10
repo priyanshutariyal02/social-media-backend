@@ -1,4 +1,4 @@
-# Playtube — Full-Stack Video & Social Media Streaming Platform
+# Playtube - Full-Stack Video & Social Media Streaming Platform
 
 A production-ready, full-stack video broadcasting and social engagement platform built with modern web architecture. Featuring high-definition video streaming, creator studio analytics, interactive community tweets, hierarchical nested commenting, and real-time search capabilities.
 
