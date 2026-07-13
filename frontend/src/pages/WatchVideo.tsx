@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api/client";
 import type { Video, Comment } from "../types";
 import { useAuth } from "../context/AuthContext";
+import { AuthRequiredPopup } from "../components/AuthRequiredPopup";
 import {
   ThumbsUp,
   MessageSquare,
@@ -91,7 +92,26 @@ const VideoCommentRepliesSection: React.FC<{ commentId: string; videoId: string 
           </button>
         </form>
       ) : (
-        <div className="text-[11px] text-gray-500 italic">Sign in to reply.</div>
+        <AuthRequiredPopup action="reply" position="bottom" className="w-full">
+          <div className="flex gap-2 items-center w-full cursor-pointer">
+            <div className="w-6 h-6 rounded-full bg-[#131a2a] border border-[#1f293d] flex items-center justify-center shrink-0 text-gray-500">
+              <CornerDownRight className="w-3 h-3" />
+            </div>
+            <input
+              type="text"
+              readOnly
+              placeholder="Add a reply..."
+              className="flex-1 bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3 py-1.5 text-xs text-gray-400 placeholder-gray-500 cursor-pointer focus:outline-none"
+            />
+            <button
+              type="button"
+              className="px-3 py-1.5 rounded-xl bg-[#131a2a] border border-[#1f293d] text-gray-400 font-bold text-xs transition-all flex items-center gap-1 shrink-0 pointer-events-none"
+            >
+              <Send className="w-3 h-3" />
+              <span>Reply</span>
+            </button>
+          </div>
+        </AuthRequiredPopup>
       )}
 
       {/* Replies List */}
@@ -272,48 +292,52 @@ export const WatchVideo: React.FC = () => {
 
             {/* Subscribe Button */}
             {user?._id !== video.owner?._id && (
-              <button
-                onClick={() =>
-                  isAuthenticated && subscribeMutation.mutate(video.owner._id)
-                }
-                disabled={subscribeMutation.isPending}
-                className={`ml-2 px-5 py-2 rounded-full font-bold text-xs transition-all flex items-center gap-1.5 shadow-md ${
-                  video.owner?.isSubscribed
-                    ? "bg-[#1f293d] text-gray-200 hover:bg-[#28354f]"
-                    : "bg-cyan-500 text-black hover:bg-cyan-400"
-                }`}
-              >
-                {video.owner?.isSubscribed ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    <span>Subscribed</span>
-                  </>
-                ) : (
-                  <>
-                    <UserPlus className="w-4 h-4" />
-                    <span>Subscribe</span>
-                  </>
-                )}
-              </button>
+              <AuthRequiredPopup action="subscribe" position="bottom">
+                <button
+                  onClick={() =>
+                    isAuthenticated && subscribeMutation.mutate(video.owner._id)
+                  }
+                  disabled={subscribeMutation.isPending}
+                  className={`ml-2 px-5 py-2 rounded-full font-bold text-xs transition-all flex items-center gap-1.5 shadow-md ${
+                    video.owner?.isSubscribed
+                      ? "bg-[#1f293d] text-gray-200 hover:bg-[#28354f]"
+                      : "bg-cyan-500 text-black hover:bg-cyan-400"
+                  }`}
+                >
+                  {video.owner?.isSubscribed ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      <span>Subscribed</span>
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-4 h-4" />
+                      <span>Subscribe</span>
+                    </>
+                  )}
+                </button>
+              </AuthRequiredPopup>
             )}
           </div>
 
           {/* Actions & Analytics */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => isAuthenticated && likeMutation.mutate()}
-              disabled={likeMutation.isPending}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs transition-all border ${
-                video.isLiked
-                  ? "bg-cyan-500/20 border-cyan-500 text-cyan-400"
-                  : "bg-[#131a2a] border-[#1f293d] text-gray-300 hover:border-gray-500"
-              }`}
-            >
-              <ThumbsUp
-                className={`w-4 h-4 ${video.isLiked ? "fill-cyan-400" : ""}`}
-              />
-              <span>{video.likesCount || 0} Likes</span>
-            </button>
+            <AuthRequiredPopup action="like" position="bottom-right">
+              <button
+                onClick={() => isAuthenticated && likeMutation.mutate()}
+                disabled={likeMutation.isPending}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs transition-all border ${
+                  video.isLiked
+                    ? "bg-cyan-500/20 border-cyan-500 text-cyan-400"
+                    : "bg-[#131a2a] border-[#1f293d] text-gray-300 hover:border-gray-500"
+                }`}
+              >
+                <ThumbsUp
+                  className={`w-4 h-4 ${video.isLiked ? "fill-cyan-400" : ""}`}
+                />
+                <span>{video.likesCount || 0} Likes</span>
+              </button>
+            </AuthRequiredPopup>
 
             <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-[#131a2a] border border-[#1f293d] text-xs text-gray-400">
               <span className="flex items-center gap-1.5">
@@ -368,9 +392,27 @@ export const WatchVideo: React.FC = () => {
             </div>
           </form>
         ) : (
-          <div className="p-4 rounded-2xl bg-[#131a2a] border border-[#1f293d] text-center text-xs text-gray-400">
-            Please sign in to join the conversation.
-          </div>
+          <AuthRequiredPopup action="comment" position="bottom" className="w-full">
+            <div className="flex gap-3 w-full cursor-pointer">
+              <div className="w-10 h-10 rounded-full bg-[#131a2a] border border-[#1f293d] flex items-center justify-center shrink-0 text-gray-500">
+                <MessageSquare className="w-5 h-5" />
+              </div>
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  readOnly
+                  placeholder="Add a public comment..."
+                  className="w-full bg-[#131a2a] border border-[#1f293d] rounded-2xl pl-4 pr-12 py-3 text-sm text-gray-400 placeholder-gray-500 cursor-pointer focus:outline-none"
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-[#1f293d] text-gray-400 transition-all pointer-events-none"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </AuthRequiredPopup>
         )}
 
         {/* Comments Feed */}

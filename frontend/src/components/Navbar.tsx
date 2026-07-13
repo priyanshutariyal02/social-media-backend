@@ -67,7 +67,10 @@ export const Navbar: React.FC = () => {
         </Link>
 
         {/* Search Bar */}
-        <div ref={searchRef} className="hidden md:flex flex-1 max-w-md relative">
+        <div
+          ref={searchRef}
+          className="hidden md:flex flex-1 max-w-md relative"
+        >
           <form onSubmit={handleSearchSubmit} className="w-full relative">
             <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
@@ -126,8 +129,8 @@ export const Navbar: React.FC = () => {
                           {video.title}
                         </span>
                         <span className="text-[10px] text-gray-400">
-                          {video.owner?.fullName || `@${video.owner?.username}`} •{" "}
-                          {video.views || 0} views
+                          {video.owner?.fullName || `@${video.owner?.username}`}{" "}
+                          • {video.views || 0} views
                         </span>
                       </div>
                     </div>

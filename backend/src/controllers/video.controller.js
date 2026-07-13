@@ -2,6 +2,7 @@ import { isValidObjectId } from "mongoose";
 import { Video } from "../models/video.models.js";
 import { Like } from "../models/like.models.js";
 import { Subscription } from "../models/subscription.models.js";
+import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -12,9 +13,20 @@ const getAllVideos = asyncHandler(async (req, res) => {
   const filter = { isPublished: true };
 
   if (query) {
+    const matchingUsers = await User.find({
+      $or: [
+        { username: { $regex: query, $options: "i" } },
+        { fullName: { $regex: query, $options: "i" } },
+      ],
+    }).select("_id");
+    const matchingUserIds = matchingUsers.map((u) => u._id);
+
     filter.$or = [
       { title: { $regex: query, $options: "i" } },
       { description: { $regex: query, $options: "i" } },
+      ...(matchingUserIds.length > 0
+        ? [{ owner: { $in: matchingUserIds } }]
+        : []),
     ];
   }
 

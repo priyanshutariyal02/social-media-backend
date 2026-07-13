@@ -11,6 +11,7 @@ import {
   CornerDownRight,
   Loader2,
 } from "lucide-react";
+import { AuthRequiredPopup } from "../components/AuthRequiredPopup";
 
 const TweetRepliesSection: React.FC<{ tweetId: string }> = ({ tweetId }) => {
   const { user, isAuthenticated } = useAuth();
@@ -82,9 +83,26 @@ const TweetRepliesSection: React.FC<{ tweetId: string }> = ({ tweetId }) => {
           </button>
         </form>
       ) : (
-        <div className="text-xs text-gray-500 italic">
-          Please sign in to reply to this post.
-        </div>
+        <AuthRequiredPopup action="reply" position="bottom" className="w-full">
+          <div className="flex gap-2.5 items-center w-full cursor-pointer">
+            <div className="w-7 h-7 rounded-full bg-[#131a2a] border border-[#1f293d] flex items-center justify-center shrink-0 text-gray-500">
+              <CornerDownRight className="w-3.5 h-3.5" />
+            </div>
+            <textarea
+              readOnly
+              rows={1}
+              placeholder="Post your reply..."
+              className="flex-1 bg-[#0b0f19] border border-[#1f293d] rounded-xl px-3.5 py-2 text-xs text-gray-400 placeholder-gray-500 cursor-pointer focus:outline-none resize-none"
+            />
+            <button
+              type="button"
+              className="px-3.5 py-2 rounded-xl bg-[#131a2a] border border-[#1f293d] text-gray-400 font-bold text-xs transition-all flex items-center gap-1 shrink-0 pointer-events-none"
+            >
+              <Send className="w-3 h-3" />
+              <span>Reply</span>
+            </button>
+          </div>
+        </AuthRequiredPopup>
       )}
 
       {/* Replies List */}
@@ -194,17 +212,16 @@ export const Tweets: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-white flex items-center gap-2">
             <MessageSquare className="w-6 h-6 text-cyan-400" />
-            <span>Creator Stream & Tweets</span>
+            <span>Playtube Community Tweets</span>
           </h1>
           <p className="text-sm text-gray-400 mt-1">
-            Share quick updates, announcements, and thoughts with your
-            subscribers.
+            Share quick updates, announcements, and thoughts with the community.
           </p>
         </div>
       </div>
 
       {/* Post Tweet Input */}
-      {isAuthenticated && (
+      {isAuthenticated ? (
         <form
           onSubmit={handleCreateTweet}
           className="p-5 rounded-3xl bg-[#131a2a] border border-[#1f293d] flex flex-col gap-3 shadow-lg"
@@ -237,6 +254,32 @@ export const Tweets: React.FC = () => {
             </button>
           </div>
         </form>
+      ) : (
+        <AuthRequiredPopup action="tweet" position="bottom" className="w-full">
+          <div className="p-5 rounded-3xl bg-[#131a2a] border border-[#1f293d] flex flex-col gap-3 shadow-lg w-full cursor-pointer">
+            <div className="flex gap-3 w-full">
+              <div className="w-10 h-10 rounded-full bg-[#0b0f19] border border-[#1f293d] flex items-center justify-center shrink-0 text-gray-500">
+                <MessageSquare className="w-5 h-5" />
+              </div>
+              <textarea
+                readOnly
+                rows={2}
+                placeholder="What's happening in your stream today?"
+                className="w-full bg-[#0b0f19] border border-[#1f293d] rounded-2xl p-3.5 text-sm text-gray-400 placeholder-gray-500 cursor-pointer focus:outline-none resize-none"
+              />
+            </div>
+            <div className="flex items-center justify-between pt-2 border-t border-[#1f293d]">
+              <span className="text-xs text-gray-500">0/280 characters</span>
+              <button
+                type="button"
+                className="px-5 py-2 rounded-xl bg-[#1f293d] text-gray-400 font-bold text-xs transition-all flex items-center gap-1.5 pointer-events-none"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>Post Tweet</span>
+              </button>
+            </div>
+          </div>
+        </AuthRequiredPopup>
       )}
 
       {/* Tweets Feed */}
@@ -294,21 +337,23 @@ export const Tweets: React.FC = () => {
               </p>
 
               <div className="flex items-center gap-5 pl-12 pt-1">
-                <button
-                  onClick={() =>
-                    isAuthenticated && likeTweetMutation.mutate(tweet._id)
-                  }
-                  className={`flex items-center gap-1.5 text-xs transition-colors ${
-                    tweet.isLiked
-                      ? "text-cyan-400 font-semibold"
-                      : "text-gray-400 hover:text-cyan-400"
-                  }`}
-                >
-                  <ThumbsUp
-                    className={`w-3.5 h-3.5 ${tweet.isLiked ? "fill-cyan-400" : ""}`}
-                  />
-                  <span>{tweet.likesCount || 0}</span>
-                </button>
+                <AuthRequiredPopup action="like" position="top-right">
+                  <button
+                    onClick={() =>
+                      isAuthenticated && likeTweetMutation.mutate(tweet._id)
+                    }
+                    className={`flex items-center gap-1.5 text-xs transition-colors ${
+                      tweet.isLiked
+                        ? "text-cyan-400 font-semibold"
+                        : "text-gray-400 hover:text-cyan-400"
+                    }`}
+                  >
+                    <ThumbsUp
+                      className={`w-3.5 h-3.5 ${tweet.isLiked ? "fill-cyan-400" : ""}`}
+                    />
+                    <span>{tweet.likesCount || 0}</span>
+                  </button>
+                </AuthRequiredPopup>
 
                 <button
                   onClick={() =>

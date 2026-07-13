@@ -10,17 +10,20 @@ export const Home: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const queryParam = searchParams.get("q") || "";
+  const userIdParam = searchParams.get("userId") || "";
 
   const {
     data: videos,
     isLoading,
     isError,
   } = useQuery<Video[]>({
-    queryKey: ["videos", queryParam],
+    queryKey: ["videos", queryParam, userIdParam],
     queryFn: async () => {
-      const endpoint = queryParam
-        ? `/videos?query=${encodeURIComponent(queryParam)}`
-        : "/videos";
+      const params = new URLSearchParams();
+      if (queryParam) params.append("query", queryParam);
+      if (userIdParam) params.append("userId", userIdParam);
+      const queryString = params.toString();
+      const endpoint = queryString ? `/videos?${queryString}` : "/videos";
       const res = await api.get(endpoint);
       return (
         res.data?.data?.videos ||
@@ -33,14 +36,19 @@ export const Home: React.FC = () => {
   return (
     <div className="flex flex-col gap-6 pb-12">
       {/* Category or Search Banner */}
-      {queryParam && (
+      {(queryParam || userIdParam) && (
         <div className="flex items-center justify-between gap-4 p-6 rounded-3xl bg-gradient-to-r from-[#131a2a] to-[#1e2a44] border border-cyan-500/30 shadow-xl">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2 text-cyan-400 text-xs font-semibold uppercase tracking-wider">
-              <Search className="w-4 h-4" /> Search Filter Active
+              <Search className="w-4 h-4" />{" "}
+              {userIdParam ? "Channel Videos" : "Search Filter Active"}
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              Results for "{queryParam}"
+              {userIdParam && queryParam
+                ? `Videos by @${queryParam}`
+                : queryParam
+                  ? `Results for "${queryParam}"`
+                  : "Creator Channel Broadcasts"}
             </h1>
             <p className="text-sm text-gray-400">
               Showing matching video broadcasts and streams.
@@ -51,7 +59,7 @@ export const Home: React.FC = () => {
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#131a2a] hover:bg-[#1f293d] border border-[#1f293d] text-xs font-semibold text-gray-300 hover:text-white transition-all"
           >
             <X className="w-4 h-4 text-red-400" />
-            <span>Clear Search</span>
+            <span>Clear Filter</span>
           </button>
         </div>
       )}

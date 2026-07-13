@@ -7,6 +7,8 @@ import { Auth } from "./pages/Auth";
 import { WatchVideo } from "./pages/WatchVideo";
 import { Tweets } from "./pages/Tweets";
 import { Dashboard } from "./pages/Dashboard";
+import { Subscriptions } from "./pages/Subscriptions";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export const App: React.FC = () => {
   return (
@@ -20,7 +22,15 @@ export const App: React.FC = () => {
             <Route path="/auth" element={<Auth />} />
             <Route path="/watch/:videoId" element={<WatchVideo />} />
             <Route path="/tweets" element={<Tweets />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/subscriptions" element={<Subscriptions />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute fallbackType="card">
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Home />} />
           </Routes>
         </main>

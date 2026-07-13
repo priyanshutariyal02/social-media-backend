@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api/client";
 import type { ChannelStats, Video } from "../types";
 import { VideoCard } from "../components/VideoCard";
+import { AuthRequiredPopup } from "../components/AuthRequiredPopup";
 import {
   Eye,
   Users,
@@ -94,13 +95,19 @@ export const Dashboard: React.FC = () => {
             streams.
           </p>
         </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-bold text-sm shadow-lg shadow-cyan-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2"
+        <AuthRequiredPopup
+          title="Creator Studio Access"
+          message="Sign in to publish videos, track analytics, and manage your broadcast channel."
+          position="bottom-right"
         >
-          <Upload className="w-4 h-4" />
-          <span>Publish Video</span>
-        </button>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-black font-bold text-sm shadow-lg shadow-cyan-500/20 hover:brightness-110 active:scale-95 transition-all flex items-center justify-center gap-2"
+          >
+            <Upload className="w-4 h-4" />
+            <span>Publish Video</span>
+          </button>
+        </AuthRequiredPopup>
       </div>
 
       {/* Analytics Cards */}

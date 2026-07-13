@@ -40,7 +40,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
       {/* Thumbnail Container */}
       <Link
         to={`/watch/${video._id}`}
-        className="relative aspect-video rounded-2xl overflow-hidden bg-[#131a2a] border border-[#1f293d] group-hover:border-cyan-500/40 transition-all shadow-md"
+        className="relative aspect-video rounded-lg overflow-hidden bg-[#131a2a] border border-[#1f293d] group-hover:border-cyan-500/40 transition-all shadow-md"
       >
         <img
           src={video.thumbnail}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../api/client";
 import { LogIn, UserPlus, Upload, AlertCircle, Loader2 } from "lucide-react";
@@ -19,6 +19,8 @@ export const Auth: React.FC = () => {
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as any)?.from?.pathname || "/";
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -38,7 +40,7 @@ export const Auth: React.FC = () => {
         const res = await api.post("/users/login", { email, password });
         const { user, accessToken } = res.data.data;
         login(user, accessToken);
-        navigate("/");
+        navigate(from, { replace: true });
       } else {
         if (!avatarFile) {
           setError("Please select an avatar image file to continue.");
@@ -60,7 +62,7 @@ export const Auth: React.FC = () => {
         const loginRes = await api.post("/users/login", { email, password });
         const { user, accessToken } = loginRes.data.data;
         login(user, accessToken);
-        navigate("/");
+        navigate(from, { replace: true });
       }
     } catch (err: any) {
       setError(
@@ -81,7 +83,7 @@ export const Auth: React.FC = () => {
         <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
 
         {/* Header tabs */}
-        <div className="flex rounded-2xl bg-[#0b0f19] p-1 border border-[#1f293d] mb-6">
+        <div className="flex rounded-lg bg-[#0b0f19] p-1 border border-[#1f293d] mb-6">
           <button
             type="button"
             onClick={() => {
