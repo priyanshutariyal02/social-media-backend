@@ -9,15 +9,18 @@ A production-ready, full-stack video broadcasting and social engagement platform
 ### Frontend (Client Application)
 * **Vibrant & Dynamic UI:** Built with **React 18**, **TypeScript**, and **Vite**, styled with custom sleek dark mode aesthetics using **TailwindCSS**.
 * **Optimized State & Caching:** Powered by **TanStack Query (React Query)** for lightning-fast API responses, automatic background data refetching, and optimistic UI updates.
-* **Live Instant Stream Search:** Real-time search bar dropdown in the navigation bar that queries matching videos and community posts as you type.
+* **Interactive Auth-Guard Popovers (`AuthRequiredPopup`):** Smart capture phase event interception popover system (`onClickCapture`) that prevents unauthorized actions (liking, subscribing, replying, posting tweets) and provides contextual guidance ("Want to join the conversation?") with instant Sign-in/Sign-up redirects without annoying alerts or full page reloads.
+* **Branded Subscriptions Landing & Route Guards:** Replicates YouTube's iconic `"Don't miss new videos"` stacked-folder landing screen for unauthenticated visitors on `/subscriptions`, plus route guard middleware (`ProtectedRoute`) protecting Creator Studio (`/dashboard`).
+* **Live Instant Stream Search & Creator Filtering:** Real-time search bar dropdown in the navigation bar plus unified multi-field search allowing users to click any channel and filter all creator broadcasts by `userId` and `@username`.
 * **Interactive Video Player:** Dedicated watch screen (`/watch/:videoId`) featuring dynamic view counters, subscriber tracking, like toggling, and nested discussion threads.
 * **Creator Studio Dashboard:** Dedicated management hub (`/dashboard`) for creators to track channel analytics (views, likes, subscribers), publish new video broadcasts, toggle visibility, and edit existing media.
-* **Creator Stream & Tweets:** Twitter-style social community stream (`/tweets`) with nested reply drawers for interactive creator-fan discussions.
+* **Playtube Community Tweets:** Twitter-style social community stream (`/tweets`) with nested reply drawers for interactive creator-fan discussions.
 
 ### Backend (API Service)
 * **Secure Authentication & Authorization:** JWT-based stateless access and refresh token rotation with secure HTTP-only cookie support and bcrypt password hashing.
 * **Cloud Media Pipeline:** Seamless multipart file uploads via **Multer** integrated with **Cloudinary** for scalable cloud video streaming and image optimization.
 * **Complex MongoDB Aggregation Pipelines:** Advanced data aggregation for calculating subscriber counts, watch history, video like metrics, and nested comment structures.
+* **Unified Multi-Field Creator Search:** Smart `$or` query resolver in `getAllVideos` that automatically looks up matching creators by `username` or `fullName` alongside `title` and `description` filters (`owner: { $in: matchingUserIds }`).
 * **Hierarchical Discussion System:** Unified `Comment` schema supporting both top-level comments and multi-level nested replies on videos and tweets.
 * **Resilient CORS & Security:** Production-configured CORS allowing cross-origin requests from Vercel frontends with credential support.
 
