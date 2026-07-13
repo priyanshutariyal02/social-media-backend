@@ -6,7 +6,6 @@ import {
   UserPlus,
   ThumbsUp,
   MessageSquare,
-  X,
   Sparkles,
 } from "lucide-react";
 
